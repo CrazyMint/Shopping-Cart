@@ -2,7 +2,7 @@
   "cart": [
     {
       "content": "apple",
-      "amount": 3,
+      "amount": 7,
       "id": 1
     }
   ],
@@ -14,7 +14,7 @@
     },
     {
       "content": "peach",
-      "amount": 3,
+      "amount": 2,
       "id": 2
     }
   ]

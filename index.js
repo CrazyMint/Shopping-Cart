@@ -169,11 +169,9 @@ const Controller = ((model, view) => {
 	const init = () => {
 		model.getInventory().then((inventory) => {
 			state.inventory = inventory;
-			view.renderInventory(state.inventory);
 		});
 		model.getCart().then((cart) => {
 			state.cart = cart;
-			view.renderCart(state.cart);
 		});
 	};
 	const handleUpdateAmount = () => {
