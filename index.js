@@ -36,6 +36,18 @@ const API = (() => {
 			.catch((err) => console.log(err));
 	};
 
+	// for selected inventory amount update
+	const updateInventory = (id, newItem) => {
+		// define your method to update an item in inventory
+		return fetch(URL + "/inventory/" + id, {
+			method: "PATCH",
+			body: JSON.stringify(newItem),
+			headers: { "Content-Type": "application/json" },
+		})
+			.then((data) => data.json())
+			.catch((err) => console.log(err));
+	};
+
 	const deleteFromCart = (id) => {
 		// define your method to delete an item in cart
 		return fetch(URL + "/cart/" + id, {
@@ -55,6 +67,7 @@ const API = (() => {
 	return {
 		getCart,
 		updateCart,
+		updateInventory,
 		getInventory,
 		addToCart,
 		deleteFromCart,
@@ -98,6 +111,7 @@ const Model = (() => {
 	const {
 		getCart,
 		updateCart,
+		updateInventory,
 		getInventory,
 		addToCart,
 		deleteFromCart,
@@ -107,6 +121,7 @@ const Model = (() => {
 		State,
 		getCart,
 		updateCart,
+		updateInventory,
 		getInventory,
 		addToCart,
 		deleteFromCart,
@@ -130,7 +145,7 @@ const View = (() => {
 		inventoryEl.innerHTML = listItems;
 	};
 	const renderCart = (cartItems) => {
-		console.log("render cart", cartItems);
+		console.log("render cart");
 		let listItems = "";
 		cartItems.forEach((item) => {
 			const curCartItem = `<li cart-id=${item.id}><span>${item.content} x ${item.amount}</span><button class='delete-btn'>delete</button></li>`;
@@ -182,8 +197,15 @@ const Controller = ((model, view) => {
 			}
 			inventoryItem.amount =
 				inventoryItem.amount <= 0 ? 0 : inventoryItem.amount;
-			// TODO: setInventory -> database
-			state.inventory = [...state.inventory];
+			// updateInventory -> database
+			const inventoryObj = {
+				content: inventoryItem.content,
+				amount: inventoryItem.amount,
+				id,
+			};
+			model.updateInventory(id, inventoryObj).then((data) => {
+				state.inventory = [...state.inventory];
+			});
 		});
 	};
 
@@ -230,7 +252,7 @@ const Controller = ((model, view) => {
 	const handleDelete = () => {
 		view.cartEl.addEventListener("click", (event) => {
 			event.preventDefault();
-			console.log("delete event");
+			console.log("delete from cart");
 			if (event.target.className !== "delete-btn") return;
 			const id = Number(event.target.parentNode.getAttribute("cart-id"));
 			model.deleteFromCart(id).then(() => {
